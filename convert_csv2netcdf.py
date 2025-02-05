@@ -49,7 +49,7 @@ def convert_adcp():
         )
         df["celldist"] = (
             df["Cell  number  (blanking  0.5  m  cell  size  4  m)"] - 1
-        ) * 4 + 0.5  # if cell numbered from 1, check! TODO
+        ) * 4 + 0.5
 
         rename_entry = namedtuple(
             "entry", "oldname newname units standard_name long_name"
