@@ -1,6 +1,7 @@
 #!/bin/env python3
 from pathlib import Path
 from collections import namedtuple
+import gsw
 import pandas as pd, xarray as xr
 import numpy as np
 
@@ -98,6 +99,16 @@ def convert_adcp():
         ds.attrs["time_coverage_resolution"] = "P0Y000DT02H00M00S"
         ds.attrs["keywords"] = (
             "EARTH SCIENCE>OCEANS>OCEAN CIRCULATION>OCEAN CURRENTS",
+        )
+        # collapse celldist dimension in 1D data vars
+        for data_var in ["heading", "pitch", "roll", "Pressure", "Temperature"]:
+            ds[data_var] = ds[data_var].mean("celldist")
+
+        ds["instrument_depth"] = (["time"], gsw.z_from_p(ds["Pressure"].values, 72.8))
+        ds["depth"] = (
+            ds["instrument_depth"] + ds["celldist"]
+            if direc == "downward"
+            else ds["instrument_depth"] - ds["celldist"]
         )
         cut_mooring_in_water(ds).to_netcdf(outdir / f"ADCP_{z}_{direc}.nc")
 
