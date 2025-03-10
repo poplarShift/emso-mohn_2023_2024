@@ -66,21 +66,22 @@ def plot_turbidity(datasets):
     import holoviews as hv
 
     hv.extension("matplotlib")
-    df_subset = df.loc[df.turbidity < 3]
-    for name, df_selec in [("full", df), ("subset", df_subset)]:
-        l = df_selec.hvplot(
+    for ylim, size in [(None, "full"), ((None, 3), "zoom")]:
+        l = df.hvplot(
             x="time",
             y="turbidity",
             by="fname",
             legend="top_right",
-            width=1200,
-            height=500,
             xlabel="Time",
             ylabel="Turbidity (NTU)",
             grid=True,
+            ylim=ylim,
+        ).opts(
+            fig_inches=(7, 3),
         )
         fig = hv.render(l)
-        fig.savefig(f"figures/turbidity-{name}.png")
+
+        fig.savefig(f"figures/turbidity-{size}.png")
 
 
 def calc_salinity(ds):
