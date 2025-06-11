@@ -110,6 +110,19 @@ def convert_adcp():
             if direc == "downward"
             else ds["instrument_depth"] - ds["celldist"]
         )
+
+        # QC flag
+        amplitudes_array = ds.filter_by_attrs(
+            long_name=lambda s: "amplitude" in s if s else False
+        ).to_array()
+        any_amplitude_below_60 = (amplitudes_array < 60).any("variable")
+        speed_above_2 = ds.sea_water_speed > 2
+        ds["QC"] = speed_above_2.astype(int) + any_amplitude_below_60.astype(int) * 2
+        ds["QC"].attrs["long_name"] = "Quality control flag"
+        ds["QC"].attrs["flag_values"] = "0,1,2,3"
+        ds["QC"].attrs[
+            "flag_meanings"
+        ] = "good, speed above 2 m/s, amplitude below 60 counts, speed above 2 m/s and amplitude below 60 counts"
         cut_mooring_in_water(ds).to_netcdf(outdir / f"ADCP_{z}_{direc}.nc")
 
 
