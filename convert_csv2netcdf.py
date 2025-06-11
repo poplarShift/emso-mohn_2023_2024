@@ -19,7 +19,7 @@ def convert_aadi():
             "Temperature(degC)": "temp",
         }
     ).set_index("time")
-    df['pressure'] /= 10  # convert kPa to dbar
+    df["pressure"] /= 10  # convert kPa to dbar
     # pressure offset, from data on 2 July 2024 (recovery):
     # 02-Jul-2024 19:00:00,31155.934,-0.586
     # 02-Jul-2024 19:30:00,31156.928,-0.585
@@ -31,7 +31,7 @@ def convert_aadi():
     # 02-Jul-2024 22:30:00,93.276,9.55
     # 02-Jul-2024 23:00:00,93.155,9.756
     # 02-Jul-2024 23:30:00,93.247,9.871
-    df['pressure'] -= 9.32
+    df["pressure"] -= 9.32
 
     ds = df.to_xarray()
     add_depth(ds, z)
