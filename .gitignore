@@ -6,3 +6,4 @@ EMSO-Mohn_extracted_data_2023_2024/
 netcdf/
 dev.ipynb
 figures/
+!netcdf/README.md
