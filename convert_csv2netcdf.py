@@ -19,13 +19,26 @@ def convert_aadi():
             "Temperature(degC)": "temp",
         }
     ).set_index("time")
+    df['pressure'] /= 10  # convert kPa to dbar
+    # pressure offset, from data on 2 July 2024 (recovery):
+    # 02-Jul-2024 19:00:00,31155.934,-0.586
+    # 02-Jul-2024 19:30:00,31156.928,-0.585
+    # 02-Jul-2024 20:00:00,22492.453,-0.64
+    # 02-Jul-2024 20:30:00,11777.275,-0.338
+    # 02-Jul-2024 21:00:00,1587.672,4.588
+    # 02-Jul-2024 21:30:00,92.842,8.701
+    # 02-Jul-2024 22:00:00,93.118,8.756
+    # 02-Jul-2024 22:30:00,93.276,9.55
+    # 02-Jul-2024 23:00:00,93.155,9.756
+    # 02-Jul-2024 23:30:00,93.247,9.871
+    df['pressure'] -= 9.32
+
     ds = df.to_xarray()
     add_depth(ds, z)
     add_metadata(ds)
     add_temp_metadata(ds)
-    ds["pressure"].attrs["units"] = "degC"
+    ds["pressure"].attrs["units"] = "dbar"
     ds["pressure"].attrs["standard_name"] = "sea_water_pressure_at_sea_floor"
-    ds["pressure"].attrs["scale"] = "ITS-90"  # TODO
 
     ds.attrs["keywords"] = (
         "EARTH SCIENCE>OCEANS>OCEAN TEMPERATURE>WATER TEMPERATURE,",
@@ -248,7 +261,7 @@ def add_turbidity_metadata(ds):
 
 
 def add_depth(ds, height):
-    ds["sea_floor_depth"] = np.nan  # TODO
+    ds["sea_floor_depth"] = 3051  # gsw.z_from_p(3106, 72.756)
     ds["sea_floor_depth"].attrs["standard_name"] = "sea_floor_depth_below_geoid"
     ds["sea_floor_depth"].attrs["units"] = "m"
     ds["height_above_sea_floor_nominal"] = height
