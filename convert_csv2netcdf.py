@@ -159,7 +159,10 @@ def convert_ctd():
                 " HH:mm:ss": "HH:mm:ss",
             }
         )
-        df["time"] = pd.to_datetime(df["day month year"] + " " + df["HH:mm:ss"])
+        df["time"] = pd.to_datetime(
+            df["day month year"] + " " + df["HH:mm:ss"],
+            format="%d %b %Y %H:%M:%S",
+        )
         df = df.set_index("time")[["temp", "conductivity", "pressure"]]
         ds = df.to_xarray()
         add_temp_metadata(ds)
@@ -228,7 +231,11 @@ def convert_sbe39():
         ("SBE39plus-IM09830_2024-07-29.csv", "IM09830", 460),
         ("SBE39plus-IM09831_2024-07-29.csv", "IM09831", 480),
     ]:
-        df = pd.read_csv(datadir / fname, parse_dates=["time"]).set_index("time")
+        df = pd.read_csv(
+            datadir / fname,
+            parse_dates=["time"],
+            date_format="%d-%b-%Y %H:%M:%S",
+        ).set_index("time")
         ds = df.to_xarray()
         ds.attrs["instrument"] = "SBE39"
         ds.attrs["time_coverage_resolution"] = "P0Y000DT00H30M00S"
