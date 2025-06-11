@@ -146,10 +146,12 @@ def plot_adcp(fname: str):
         & (ds["amplitude4"] > crit_amp)
     )
     fig, ax = plt.subplots()
-    ds["sea_water_speed"].where(good).sel(celldist=good.any("time")).plot.line(
-        x="time", ax=ax
-    )
-    fig.savefig("figures/" + Path(fname).with_suffix(".png").name)
+    for v in ['sea_water_speed', 'u', 'v', 'direction']:
+        plt.figure()
+        ds[v].where(good).sel(celldist=good.any("time")).plot.line(
+            x="time", ax=ax
+        )
+        fig.savefig(f"figures/{v}_" + Path(fname).with_suffix(".png").name)
 
 
 if __name__ == "__main__":
