@@ -118,10 +118,10 @@ def convert_adcp():
             ds[data_var] = ds[data_var].mean("celldist")
 
         ds["instrument_depth"] = (["time"], gsw.z_from_p(ds["Pressure"].values, 72.8))
-        ds["depth"] = (
-            ds["instrument_depth"] + ds["celldist"]
+        ds["depth"] = (  # depth downward positive
+            ds["instrument_depth"] - ds["celldist"]
             if direc == "downward"
-            else ds["instrument_depth"] - ds["celldist"]
+            else ds["instrument_depth"] + ds["celldist"]
         )
 
         # QC flag
