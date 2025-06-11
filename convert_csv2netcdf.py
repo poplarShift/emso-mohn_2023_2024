@@ -258,7 +258,7 @@ def cut_mooring_in_water(ds):
 def add_temp_metadata(ds):
     ds["temp"].attrs["units"] = "degC"
     ds["temp"].attrs["standard_name"] = "sea_water_temperature"
-    ds["temp"].attrs["scale"] = "ITS-90"  # TODO
+    ds["temp"].attrs["scale"] = "ITS-90"
 
 
 def add_turbidity_metadata(ds):
