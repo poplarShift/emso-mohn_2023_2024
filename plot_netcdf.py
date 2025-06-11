@@ -133,24 +133,10 @@ def plot_salinity(datasets):
 
 def plot_adcp(fname: str):
     ds = xr.load_dataset(fname)
-    crit_cor = 80
-    crit_amp = 1
-    good = (
-        (ds["correlation1"] > crit_cor)
-        & (ds["correlation2"] > crit_cor)
-        & (ds["correlation3"] > crit_cor)
-        & (ds["correlation4"] > crit_cor)
-        & (ds["amplitude1"] > crit_amp)
-        & (ds["amplitude2"] > crit_amp)
-        & (ds["amplitude3"] > crit_amp)
-        & (ds["amplitude4"] > crit_amp)
-    )
-    fig, ax = plt.subplots()
-    for v in ['sea_water_speed', 'u', 'v', 'direction']:
-        plt.figure()
-        ds[v].where(good).sel(celldist=good.any("time")).plot.line(
-            x="time", ax=ax
-        )
+    good = ds["QC"] == 0
+    for v in ["sea_water_speed", "u", "v", "direction"]:
+        fig, ax = plt.subplots()
+        ds[v].where(good).sel(celldist=good.any("time")).plot.line(x="time", ax=ax)
         fig.savefig(f"figures/{v}_" + Path(fname).with_suffix(".png").name)
 
 
